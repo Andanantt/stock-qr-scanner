@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0">
+
+  <title>Stock QR Scanner</title>
+
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: #eef2f9;
+      color: #16233f;
+    }
+
+    .container {
+      max-width: 480px;
+      min-height: 100vh;
+      margin: auto;
+      padding: 24px 16px;
+    }
+
+    h1 {
+      text-align: center;
+      margin: 10px 0 20px;
+      font-size: 24px;
+    }
+
+    .scanner {
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    #reader {
+      width: 100%;
+    }
+
+    .result {
+      margin-top: 20px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 18px;
+      text-align: center;
+    }
+
+    .vin {
+      font-size: 20px;
+      font-weight: bold;
+      word-break: break-all;
+      margin-top: 8px;
+    }
+
+    .status {
+      margin-top: 15px;
+      font-size: 14px;
+      color: #66738f;
+      text-align: center;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <h1>Scan QR</h1>
+
+    <div class="scanner">
+      <div id="reader"></div>
+    </div>
+
+    <div class="status" id="status">
+      กำลังเตรียมกล้อง...
+    </div>
+
+    <div class="result">
+      <div>VIN ที่อ่านได้</div>
+      <div class="vin" id="vin">
+        -
+      </div>
+    </div>
+
+  </div>
+
+
+  <script>
+
+    let scanner = null;
+
+    function startScanner() {
+
+      scanner = new Html5Qrcode("reader");
+
+      const config = {
+        fps: 10,
+        qrbox: {
+          width: 250,
+          height: 250
+        }
+      };
+
+      scanner.start(
+        {
+          facingMode: "environment"
+        },
+        config,
+
+        function(decodedText) {
+
+          console.log("QR:", decodedText);
+
+          document.getElementById("vin").textContent =
+            decodedText;
+
+          document.getElementById("status").textContent =
+            "อ่าน QR สำเร็จ";
+
+          stopScanner();
+        },
+
+        function(errorMessage) {
+          // ไม่ต้องแสดง error ทุก frame
+        }
+
+      ).then(function() {
+
+        document.getElementById("status").textContent =
+          "กล้องพร้อมใช้งาน — เล็งไปที่ QR";
+
+      }).catch(function(error) {
+
+        console.error(error);
+
+        document.getElementById("status").textContent =
+          "เปิดกล้องไม่สำเร็จ: " + error;
+
+      });
+    }
+
+
+    function stopScanner() {
+
+      if (!scanner) return;
+
+      scanner.stop()
+        .then(function() {
+          scanner.clear();
+        })
+        .catch(function(error) {
+          console.error(error);
+        });
+
+    }
+
+
+    window.addEventListener("load", function() {
+      startScanner();
+    });
+
+  </script>
+
+</body>
+</html>
