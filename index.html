@@ -385,26 +385,29 @@ function startScanner() {
         APP_URL +
         "?vin=" +
         encodeURIComponent(vin);
-
-
-      console.log(
-        "Redirect to:",
-        targetUrl
-      );
-
-
-      /*
-       * =====================================================
-       * GO BACK TO STOCK CHECKING APP
-       * =====================================================
-       */
-
-      setTimeout(function() {
-
-        window.location.href =
-          targetUrl;
-
-      }, 500);
+      
+      console.log("================================");
+      console.log("QR ORIGINAL:", decodedText);
+      console.log("VIN EXTRACTED:", vin);
+      console.log("VIN LENGTH:", vin.length);
+      console.log("VIN CHAR CODES:", [...vin].map(c => c.charCodeAt(0)));
+      console.log("TARGET URL:", targetUrl);
+      console.log("================================");
+      
+      
+      document.getElementById("status").textContent =
+        "VIN: " + vin + " | Length: " + vin.length;
+      
+      
+      // แสดง URL ที่กำลังจะส่ง
+      document.getElementById("vin").textContent =
+        vin;
+      
+      
+      // ชั่วคราวยังไม่ Redirect
+      // setTimeout(function() {
+      //   window.location.href = targetUrl;
+      // }, 500);
 
 
     },
