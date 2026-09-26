@@ -396,19 +396,20 @@ function startScanner() {
       
       
       document.getElementById("status").textContent =
-        "VIN: " + vin + " | Length: " + vin.length;
+        "อ่าน QR สำเร็จ — กำลังค้นหาข้อมูลรถ...";
       
       
-      // แสดง URL ที่กำลังจะส่ง
       document.getElementById("vin").textContent =
         vin;
       
       
-      // ชั่วคราวยังไม่ Redirect
-      // setTimeout(function() {
-      //   window.location.href = targetUrl;
-      // }, 500);
-
+      // กลับไปยัง Stock Checking App
+      setTimeout(function() {
+      
+        window.location.href =
+          targetUrl;
+      
+      }, 500);
 
     },
 
