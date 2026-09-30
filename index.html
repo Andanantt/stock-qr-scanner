@@ -53,6 +53,28 @@ h1 {
   font-size: 24px;
 }
 
+.back-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+
+  border: none;
+  background: transparent;
+
+  color: #2f6fed;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  padding: 6px 0;
+
+  cursor: pointer;
+}
+
+.back-btn:active {
+  opacity: 0.6;
+}  
+
 .scanner {
   background: #000;
 
@@ -109,14 +131,27 @@ h1 {
   word-break: break-all;
 }
 
+
+  
 </style>
 
+
+
+
+  
 </head>
 
 
 <body>
 
 <div class="container">
+
+  <button
+    type="button"
+    class="back-btn"
+    id="btnBack">
+    ← กลับ
+  </button>
 
   <h1>Scan QR</h1>
 
@@ -159,13 +194,86 @@ h1 {
  * =========================================================
  */
 
+const params = new URLSearchParams(window.location.search);
+
 const APP_URL =
-"https://script.google.com/a/macros/tripetch-isuzu.co.th/s/AKfycbwAk2fjCXzX7p8bTXzV854Deh3kNoTZCiNK5WHmIFYHYrFJU_rDSwxX41kJrcBFuhrZ8Q/exec";
+  params.get('returnUrl') ||
+  'https://script.google.com/a/macros/tripetch-isuzu.co.th/s/AKfycbwAk2fjCXzX7p8bTXzV854Deh3kNoTZCiNK5WHmIFYHYrFJU_rDSwxX41kJrcBFuhrZ8Q/exec';
 
-
-let scanner = null;
-
-let scanCompleted = false;
+  let scanner = null;
+  
+  let scanCompleted = false;
+  
+  
+  /*
+   * =========================================================
+   * BACK TO STOCK CHECKING APP
+   * =========================================================
+   */
+  
+    document.getElementById("btnBack").addEventListener(
+      "click",
+      function() {
+    
+        /*
+         * Stop camera before leaving scanner page
+         */
+    
+        function goBackToScanPage() {
+    
+          const separator =
+            APP_URL.includes('?') ? '&' : '?';
+    
+          const scanPageUrl =
+            APP_URL +
+            separator +
+            'screen=scan';
+    
+          console.log(
+            "Back to Stock Checking App:",
+            scanPageUrl
+          );
+    
+          window.location.href =
+            scanPageUrl;
+        }
+    
+    
+        if (scanner) {
+    
+          scanner
+            .stop()
+            .then(function() {
+    
+              scanner.clear();
+    
+              goBackToScanPage();
+    
+            })
+            .catch(function(error) {
+    
+              console.error(
+                "Scanner stop error:",
+                error
+              );
+    
+              /*
+               * Even if camera stop fails,
+               * still return to Scan QR page.
+               */
+    
+              goBackToScanPage();
+    
+            });
+    
+        } else {
+    
+          goBackToScanPage();
+    
+        }
+    
+      }
+    );
 
 
 /*
@@ -381,10 +489,14 @@ function startScanner() {
        *
        */
 
-      const targetUrl =
-        APP_URL +
-        "?vin=" +
-        encodeURIComponent(vin);
+    const separator =
+      APP_URL.includes('?') ? '&' : '?';
+    
+    const targetUrl =
+      APP_URL +
+      separator +
+      'vin=' +
+      encodeURIComponent(vin);
       
       console.log("================================");
       console.log("QR ORIGINAL:", decodedText);
